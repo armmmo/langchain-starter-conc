@@ -111,7 +111,7 @@ export default function HomePage() {
               <Zap className="h-12 w-12 text-purple-600 mb-4" />
               <CardTitle className="text-xl">Lightning Fast Search</CardTitle>
               <CardDescription>
-                Vector-powered semantic search finds relevant information instantly, even when exact keywords don't match.
+                Vector-powered semantic search finds relevant information instantly, even when exact keywords don&apos;t match.
               </CardDescription>
             </CardHeader>
           </Card>

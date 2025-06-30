@@ -149,7 +149,7 @@ export default function PricingPage() {
           </div>
           <div>
             <h3 className="font-semibold mb-2">What happens to my documents if I downgrade?</h3>
-            <p className="text-gray-600">Your documents will remain accessible, but you may hit storage limits. We'll help you manage your documents accordingly.</p>
+            <p className="text-gray-600">Your documents will remain accessible, but you may hit storage limits. We&apos;ll help you manage your documents accordingly.</p>
           </div>
           <div>
             <h3 className="font-semibold mb-2">Do you offer enterprise plans?</h3>

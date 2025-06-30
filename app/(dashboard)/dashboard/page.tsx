@@ -94,7 +94,7 @@ export default function DashboardPage() {
               Welcome back, {session.user.name || session.user.email}
             </h1>
             <p className="text-gray-600 mt-2">
-              Here's what's happening with your AI assistant today.
+              Here&apos;s what&apos;s happening with your AI assistant today.
             </p>
           </div>
           <div className="flex items-center space-x-2">
@@ -273,11 +273,11 @@ export default function DashboardPage() {
                 <div className="flex items-center space-x-2">
                   <Zap className="h-5 w-5 text-orange-600" />
                   <span className="font-medium text-orange-800">
-                    You're approaching your monthly query limit
+                    You&apos;re approaching your monthly query limit
                   </span>
                 </div>
                 <p className="text-orange-700 mt-2">
-                  You've used {stats.queriesThisMonth} of {stats.queryLimit} queries this month. 
+                  You&apos;ve used {stats.queriesThisMonth} of {stats.queryLimit} queries this month. 
                   Consider upgrading to a higher plan for unlimited usage.
                 </p>
                 <Link href="/pricing" className="mt-3 inline-block">
@@ -295,7 +295,7 @@ export default function DashboardPage() {
                 <div className="flex items-center space-x-2">
                   <FileText className="h-5 w-5 text-blue-600" />
                   <span className="font-medium text-blue-800">
-                    You're approaching your document limit
+                    You&apos;re approaching your document limit
                   </span>
                 </div>
                 <p className="text-blue-700 mt-2">

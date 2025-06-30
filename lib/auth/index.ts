@@ -73,7 +73,15 @@ export const authOptions: NextAuthOptions = {
           .innerJoin(teams, eq(teams.id, teamMembers.teamId))
           .where(eq(teamMembers.userId, user.id));
 
-        token.teams = userTeams;
+        // Filter out any teams with null teamId and ensure type compatibility
+        token.teams = userTeams
+          .filter(team => team.teamId !== null)
+          .map(team => ({
+            teamId: team.teamId!,
+            role: team.role,
+            teamName: team.teamName,
+            teamSlug: team.teamSlug,
+          }));
       }
       return token;
     },
@@ -88,7 +96,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
-    signUp: '/auth/signup',
   },
 };
 
