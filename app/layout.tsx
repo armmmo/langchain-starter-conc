@@ -73,10 +73,6 @@ export default function RootLayout({
                 </a>
                 <nav className="flex gap-1 flex-col md:flex-row">
                   <ActiveLink href="/">🏴‍☠️ Chat</ActiveLink>
-                  <ActiveLink href="/qa">❓ Q&A Mode</ActiveLink>
-                  <ActiveLink href="/quiz">🃏 Quiz Cards</ActiveLink>
-                  <ActiveLink href="/leaderboard">🏆 Leaderboard</ActiveLink>
-                  <ActiveLink href="/history">📚 History</ActiveLink>
                   <ActiveLink href="/structured_output">
                     🧱 Structured Output
                   </ActiveLink>
