@@ -4,7 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { db } from '../db';
-import { users, teams, teamMembers } from '../db/schema';
+import { users } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 export const authOptions: NextAuthOptions = {
@@ -60,28 +60,6 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        
-        // Get user's teams
-        const userTeams = await db
-          .select({
-            teamId: teamMembers.teamId,
-            role: teamMembers.role,
-            teamName: teams.name,
-            teamSlug: teams.slug,
-          })
-          .from(teamMembers)
-          .innerJoin(teams, eq(teams.id, teamMembers.teamId))
-          .where(eq(teamMembers.userId, user.id));
-
-        // Filter out any teams with null teamId and ensure type compatibility
-        token.teams = userTeams
-          .filter(team => team.teamId !== null)
-          .map(team => ({
-            teamId: team.teamId!,
-            role: team.role,
-            teamName: team.teamName,
-            teamSlug: team.teamSlug,
-          }));
       }
       return token;
     },
@@ -89,7 +67,6 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.sub!;
         session.user.role = token.role;
-        session.user.teams = token.teams;
       }
       return session;
     },
@@ -101,7 +78,7 @@ export const authOptions: NextAuthOptions = {
 
 // Helper functions for role-based access control
 export function hasRole(userRole: string, requiredRole: string): boolean {
-  const roleHierarchy = ['member', 'admin'];
+  const roleHierarchy = ['user', 'admin'];
   const userRoleIndex = roleHierarchy.indexOf(userRole);
   const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
   
@@ -110,10 +87,6 @@ export function hasRole(userRole: string, requiredRole: string): boolean {
 
 export function isAdmin(userRole: string): boolean {
   return userRole === 'admin';
-}
-
-export function canAccessTeam(userTeams: any[], teamId: string): boolean {
-  return userTeams.some(team => team.teamId === teamId);
 }
 
 // Types for extended session
@@ -128,12 +101,6 @@ declare module 'next-auth' {
       email: string;
       name?: string;
       role: string;
-      teams: Array<{
-        teamId: string;
-        role: string;
-        teamName: string;
-        teamSlug: string;
-      }>;
     };
   }
 }
@@ -141,11 +108,5 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     role: string;
-    teams: Array<{
-      teamId: string;
-      role: string;
-      teamName: string;
-      teamSlug: string;
-    }>;
   }
 }
