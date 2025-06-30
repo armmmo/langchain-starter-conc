@@ -143,6 +143,73 @@ export const systemConfig = pgTable('system_config', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// User history
+export const userHistory = pgTable('user_history', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(), // 'chat', 'qa', 'quiz'
+  title: text('title'),
+  content: text('content').notNull(), // JSON string
+  score: integer('score'), // For quizzes
+  metadata: text('metadata'), // JSON string for additional data
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Q&A sessions
+export const qaSessionsTable = pgTable('qa_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  topic: text('topic'),
+  difficulty: text('difficulty').default('medium'), // 'easy', 'medium', 'hard'
+  currentQuestionIndex: integer('current_question_index').default(0),
+  score: integer('score').default(0),
+  totalQuestions: integer('total_questions').default(0),
+  isCompleted: boolean('is_completed').default(false),
+  questions: text('questions').notNull(), // JSON array of questions
+  userAnswers: text('user_answers'), // JSON array of user answers
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Quiz sessions
+export const quizSessions = pgTable('quiz_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  topic: text('topic'),
+  difficulty: text('difficulty').default('medium'),
+  timeLimit: integer('time_limit').default(300), // in seconds
+  timeRemaining: integer('time_remaining'),
+  currentCardIndex: integer('current_card_index').default(0),
+  score: integer('score').default(0),
+  totalCards: integer('total_cards').default(0),
+  isCompleted: boolean('is_completed').default(false),
+  cards: text('cards').notNull(), // JSON array of quiz cards
+  userAnswers: text('user_answers'), // JSON array of user answers
+  completedAt: timestamp('completed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Leaderboard entries
+export const leaderboard = pgTable('leaderboard', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(), // 'qa', 'quiz'
+  topic: text('topic'),
+  difficulty: text('difficulty'),
+  score: integer('score').notNull(),
+  maxScore: integer('max_score').notNull(),
+  percentage: integer('percentage').notNull(), // score percentage
+  timeSpent: integer('time_spent'), // in seconds
+  rank: integer('rank'),
+  sessionId: text('session_id'), // reference to qa_sessions or quiz_sessions
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  scoreIndex: index('leaderboard_score_idx').on(table.score),
+  typeIndex: index('leaderboard_type_idx').on(table.type),
+  userIndex: index('leaderboard_user_idx').on(table.userId),
+}));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
@@ -152,6 +219,10 @@ export const usersRelations = relations(users, ({ many }) => ({
   subscriptions: many(subscriptions),
   usage: many(usage),
   activityLogs: many(activityLogs),
+  userHistory: many(userHistory),
+  qaSessions: many(qaSessionsTable),
+  quizSessions: many(quizSessions),
+  leaderboardEntries: many(leaderboard),
 }));
 
 export const documentsRelations = relations(documents, ({ one, many }) => ({
@@ -181,5 +252,33 @@ export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
   session: one(chatSessions, {
     fields: [chatMessages.sessionId],
     references: [chatSessions.id],
+  }),
+}));
+
+export const userHistoryRelations = relations(userHistory, ({ one }) => ({
+  user: one(users, {
+    fields: [userHistory.userId],
+    references: [users.id],
+  }),
+}));
+
+export const qaSessionsRelations = relations(qaSessionsTable, ({ one }) => ({
+  user: one(users, {
+    fields: [qaSessionsTable.userId],
+    references: [users.id],
+  }),
+}));
+
+export const quizSessionsRelations = relations(quizSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [quizSessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const leaderboardRelations = relations(leaderboard, ({ one }) => ({
+  user: one(users, {
+    fields: [leaderboard.userId],
+    references: [users.id],
   }),
 }));
