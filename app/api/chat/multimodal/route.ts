@@ -4,27 +4,24 @@ import { ChatOpenAI } from '@langchain/openai';
 import { HumanMessage } from '@langchain/core/messages';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { usageMetrics, chatMessages, chatSessions } from '@/lib/db/schema';
+import { usage, chatSessions, chatMessages } from '@/lib/db/schema';
 import { generateRAGResponse } from '@/lib/embeddings';
+import { nanoid } from 'nanoid';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messages, sessionId, teamId, includeRAG = false } = await request.json();
+    const { messages, sessionId, includeRAG = true } = await request.json();
 
     if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json({ error: 'Messages array required' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid messages format' }, { status: 400 });
     }
 
-    const teamIdToUse = teamId || session.user.teams?.[0]?.teamId;
-    if (!teamIdToUse) {
-      return NextResponse.json({ error: 'No team found' }, { status: 400 });
-    }
+    const userId = session.user.id;
 
     // Initialize the multimodal model
     const model = new ChatOpenAI({
@@ -84,7 +81,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (queryText) {
-          const ragResponse = await generateRAGResponse(queryText, teamIdToUse, session.user.id);
+          const ragResponse = await generateRAGResponse(queryText, userId, userId);
           sources = ragResponse.sources;
           
           // Add RAG context to the conversation
@@ -105,31 +102,37 @@ export async function POST(request: NextRequest) {
     if (sessionId) {
       // Save user message
       await db.insert(chatMessages).values({
+        id: nanoid(),
         sessionId,
         role: 'user',
         content: JSON.stringify(messages[messages.length - 1]),
-        metadata: { multimodal: true, includeRAG },
+        metadata: JSON.stringify({ multimodal: true, includeRAG }),
+        createdAt: new Date()
       });
 
       // Save assistant response
       await db.insert(chatMessages).values({
+        id: nanoid(),
         sessionId,
         role: 'assistant',
         content: finalResponse,
-        metadata: { sources: sources.length > 0 ? sources : undefined },
+        metadata: JSON.stringify({ sources, multimodal: true }),
+        createdAt: new Date()
       });
     }
 
     // Track usage
-    await db.insert(usageMetrics).values({
-      teamId: teamIdToUse,
-      userId: session.user.id,
+    await db.insert(usage).values({
+      id: nanoid(),
+      userId: userId,
       type: 'query',
-      metadata: { 
+      count: 1,
+      date: new Date(),
+      metadata: JSON.stringify({ 
         multimodal: true, 
         includeRAG,
-        sourcesCount: sources.length 
-      },
+        messageCount: messages.length
+      })
     });
 
     return NextResponse.json({

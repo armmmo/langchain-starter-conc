@@ -2,110 +2,101 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { documents } from '@/lib/db/schema';
-import { processDocument } from '@/lib/embeddings';
-import { isAdmin } from '@/lib/auth';
+import { documents, documentChunks, usage } from '@/lib/db/schema';
+import { nanoid } from 'nanoid';
+import { processDocument as processDocumentEmbeddings } from '@/lib/embeddings';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication and admin role
     const session = await getServerSession(authOptions);
-    if (!session?.user || !isAdmin(session.user.role)) {
+    
+    if (!session?.user?.role || (session.user as any).role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const formData = await request.formData();
-    const files = formData.getAll('files') as File[];
+    const files = Array.from(formData.getAll('files')) as File[];
 
-    if (!files || files.length === 0) {
+    if (!files.length) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
 
     const uploadedDocuments = [];
-    const teamId = session.user.teams?.[0]?.teamId; // Admin's primary team
+    const adminUserId = session.user.id;
 
-    if (!teamId) {
-      return NextResponse.json({ error: 'No team found for user' }, { status: 400 });
-    }
-
+    // Process each file
     for (const file of files) {
       // Validate file type
       const allowedTypes = [
         'text/plain',
         'application/pdf',
         'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'text/markdown',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ];
 
       if (!allowedTypes.includes(file.type)) {
         continue; // Skip unsupported files
       }
 
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        continue; // Skip files larger than 10MB
-      }
-
+      const content = await file.text();
+      
       try {
-        // Extract text content from file
-        const text = await extractTextFromFile(file);
-        
         // Create database record
+        const documentId = nanoid();
         const [document] = await db.insert(documents).values({
-          teamId,
-          uploadedById: session.user.id,
+          id: documentId,
+          userId: adminUserId, // Admin uploads for all users
           filename: `${Date.now()}-${file.name}`,
-          originalName: file.name,
-          mimeType: file.type,
+          contentType: file.type,
           size: file.size,
-          content: text,
-          isProcessed: false,
+          content,
+          metadata: JSON.stringify({
+            originalName: file.name,
+            uploadedBy: 'admin',
+            uploadedAt: new Date().toISOString()
+          }),
+          createdAt: new Date(),
+          updatedAt: new Date()
         }).returning();
 
         uploadedDocuments.push(document);
 
         // Process document asynchronously (generate embeddings)
-        processDocument(document.id, text, teamId).catch(error => {
+        // Note: The embeddings function expects teamId but we'll use userId for now
+        processDocumentEmbeddings(documentId, content, adminUserId).catch(error => {
           console.error('Document processing error:', error);
         });
 
       } catch (error) {
-        console.error('Error processing file:', file.name, error);
-        continue; // Skip problematic files
+        console.error('Error uploading document:', error);
       }
+    }
+
+    // Track usage
+    try {
+      await db.insert(usage).values({
+        id: nanoid(),
+        userId: adminUserId,
+        type: 'document_upload',
+        count: uploadedDocuments.length,
+        date: new Date(),
+        metadata: JSON.stringify({
+          filenames: uploadedDocuments.map(d => d.filename),
+          source: 'admin_upload'
+        })
+      });
+    } catch (error) {
+      console.error('Error tracking usage:', error);
     }
 
     return NextResponse.json({
       success: true,
-      uploadedCount: uploadedDocuments.length,
       documents: uploadedDocuments,
+      count: uploadedDocuments.length
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Document upload error:', error);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
-}
-
-async function extractTextFromFile(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const content = new TextDecoder().decode(buffer);
-
-  // For now, we'll handle plain text files
-  // In a production app, you'd want to add proper PDF, DOCX parsing
-  if (file.type === 'text/plain' || file.type === 'text/markdown') {
-    return content;
-  }
-
-  // For other file types, you would integrate with libraries like:
-  // - pdf-parse for PDFs
-  // - mammoth for DOCX files
-  // - etc.
-  
-  // Placeholder for other file types
-  return `Content extracted from ${file.name}\n\n${content}`;
 }

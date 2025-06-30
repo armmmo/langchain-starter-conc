@@ -28,14 +28,12 @@ export default function PricingPage() {
     setLoading(planKey);
 
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch('/api/payments/create-checkout-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: plan.stripePriceId,
-          teamId: session.user.teams?.[0]?.teamId,
+          userId: session.user.id,
         }),
       });
 

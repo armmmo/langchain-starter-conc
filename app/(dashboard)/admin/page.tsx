@@ -311,12 +311,12 @@ export default function AdminDashboard() {
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <Link href="/admin/settings">
+            <Link href="/admin/config">
               <CardHeader>
                 <Settings className="h-8 w-8 text-gray-600 mb-2" />
-                <CardTitle className="text-lg">System Settings</CardTitle>
+                <CardTitle className="text-lg">System Configuration</CardTitle>
                 <CardDescription>
-                  Configure system-wide settings and preferences
+                  Configure API keys and system settings
                 </CardDescription>
               </CardHeader>
             </Link>
