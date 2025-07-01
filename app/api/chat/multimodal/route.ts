@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (queryText) {
-          const ragResponse = await generateRAGResponse(queryText, userId, userId);
+          const ragResponse = await generateRAGResponse(queryText, userId);
           sources = ragResponse.sources;
           
           // Add RAG context to the conversation

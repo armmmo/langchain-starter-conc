@@ -24,8 +24,7 @@ export interface DocumentProcessingResult {
 
 export async function processDocument(
   documentId: string,
-  content: string,
-  teamId?: string // Made optional since it's not in the schema
+  content: string
 ): Promise<DocumentProcessingResult> {
   try {
     // Split the document into chunks
@@ -43,14 +42,11 @@ export async function processDocument(
         content: doc.pageContent,
         embedding: embedding, // Pass number array directly, not as string
         metadata: JSON.stringify(doc.metadata), // Convert to JSON string as per schema
-        // Removed teamId, tokenCount, chunkIndex as they're not in the schema
       });
     }
 
     // Insert chunks into database
     await db.insert(documentChunks).values(chunks);
-
-    // Note: Removed document update operations as isProcessed/processingError fields don't exist in schema
 
     return {
       success: true,
@@ -68,7 +64,6 @@ export async function processDocument(
 
 export async function searchSimilarChunks(
   query: string,
-  teamId?: string, // Made optional since it's not used in filtering
   limit: number = 5,
   threshold: number = 0.7
 ) {
@@ -104,7 +99,6 @@ export async function searchSimilarChunks(
 
 export async function generateRAGResponse(
   query: string,
-  teamId: string,
   userId: string
 ): Promise<{
   response: string;
@@ -116,7 +110,7 @@ export async function generateRAGResponse(
 }> {
   try {
     // Search for relevant chunks
-    const relevantChunks = await searchSimilarChunks(query, teamId, 5, 0.7);
+    const relevantChunks = await searchSimilarChunks(query, 5, 0.7);
     
     if (relevantChunks.length === 0) {
       return {
