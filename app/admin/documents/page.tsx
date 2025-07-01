@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
-import { ArrowLeft, Upload, FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { ArrowLeft, Upload, FileText, Clock, CheckCircle, XCircle, Type } from 'lucide-react';
 import { AdminDocumentUpload } from '../../../components/admin/AdminDocumentUpload';
 import { AdminDocumentList } from '../../../components/admin/AdminDocumentList';
+import { UploadDocumentsForm } from '../../../components/UploadDocumentsForm';
 
 export default async function AdminDocuments() {
   const session = await getServerSession(authOptions);
@@ -79,7 +81,7 @@ export default async function AdminDocuments() {
         </Card>
       </div>
 
-      {/* Document Upload */}
+      {/* Document Upload Tabs */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -91,7 +93,42 @@ export default async function AdminDocuments() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AdminDocumentUpload />
+          <Tabs defaultValue="files" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="files" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                File Upload
+              </TabsTrigger>
+              <TabsTrigger value="text" className="flex items-center gap-2">
+                <Type className="h-4 w-4" />
+                Text Input
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="files" className="mt-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Upload Files</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Drag and drop PDF, DOCX, DOC, TXT, or MD files for processing
+                  </p>
+                </div>
+                <AdminDocumentUpload />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="text" className="mt-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Direct Text Input</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Paste or type text content directly for immediate processing
+                  </p>
+                </div>
+                <UploadDocumentsForm />
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

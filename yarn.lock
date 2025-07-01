@@ -2425,7 +2425,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-progress@npm:1.1.7, @radix-ui/react-progress@npm:^1.0.3":
+"@radix-ui/react-progress@npm:1.1.7, @radix-ui/react-progress@npm:^1.1.7":
   version: 1.1.7
   resolution: "@radix-ui/react-progress@npm:1.1.7"
   dependencies:
@@ -2527,7 +2527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-select@npm:2.2.5, @radix-ui/react-select@npm:^2.0.0":
+"@radix-ui/react-select@npm:2.2.5, @radix-ui/react-select@npm:^2.2.5":
   version: 2.2.5
   resolution: "@radix-ui/react-select@npm:2.2.5"
   dependencies:
@@ -2654,7 +2654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-tabs@npm:1.1.12, @radix-ui/react-tabs@npm:^1.0.4":
+"@radix-ui/react-tabs@npm:1.1.12, @radix-ui/react-tabs@npm:^1.1.12":
   version: 1.1.12
   resolution: "@radix-ui/react-tabs@npm:1.1.12"
   dependencies:
@@ -3609,13 +3609,13 @@ __metadata:
     "@radix-ui/react-dropdown-menu": ^2.0.6
     "@radix-ui/react-label": ^2.0.2
     "@radix-ui/react-navigation-menu": ^1.1.4
-    "@radix-ui/react-progress": ^1.0.3
+    "@radix-ui/react-progress": ^1.1.7
     "@radix-ui/react-scroll-area": ^1.0.5
-    "@radix-ui/react-select": ^2.0.0
+    "@radix-ui/react-select": ^2.2.5
     "@radix-ui/react-separator": ^1.0.3
     "@radix-ui/react-slot": ^1.0.2
     "@radix-ui/react-switch": ^1.0.3
-    "@radix-ui/react-tabs": ^1.0.4
+    "@radix-ui/react-tabs": ^1.1.12
     "@radix-ui/react-toast": ^1.1.5
     "@radix-ui/react-tooltip": ^1.0.7
     "@supabase/supabase-js": ^2.50.2
