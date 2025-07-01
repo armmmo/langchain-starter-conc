@@ -37,7 +37,7 @@ export default withAuth(
     if (isAiRoute) {
       // In a real app, you'd check usage limits here
       // For now, we'll allow access for authenticated users
-      if (!token.teams || token.teams.length === 0) {
+      if (!token.teams || !Array.isArray(token.teams) || token.teams.length === 0) {
         return NextResponse.json(
           { error: 'No team found. Please contact support.' },
           { status: 403 }
