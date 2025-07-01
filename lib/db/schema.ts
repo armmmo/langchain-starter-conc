@@ -72,7 +72,7 @@ export const documentChunks = pgTable('document_chunks', {
   metadata: text('metadata'), // JSON string
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => ({
-  embeddingIndex: index('embedding_idx').using('hnsw', table.embedding),
+  embeddingIndex: index('embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
 }));
 
 // Chat sessions
