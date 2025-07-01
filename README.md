@@ -1,129 +1,263 @@
-# 🦜️🔗 LangChain + Next.js Starter Template
+# � AI-Powered SaaS RAG Platform
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/langchain-ai/langchain-nextjs-template)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flangchain-ai%2Flangchain-nextjs-template)
+A comprehensive SaaS platform that combines advanced AI capabilities with document intelligence, built by mixing three powerful repositories:
 
-This template scaffolds a LangChain.js + Next.js starter app. It showcases how to use and combine LangChain modules for several
-use cases. Specifically:
+- **LangChain Next.js Template** - Advanced AI/LLM capabilities
+- **Next.js SaaS Starter** - Modern SaaS infrastructure  
+- **iaconc RAG SaaS** - Vector embeddings and RAG system
 
-- [Simple chat](/app/api/chat/route.ts)
-- [Returning structured output from an LLM call](/app/api/chat/structured_output/route.ts)
-- [Answering complex, multi-step questions with agents](/app/api/chat/agents/route.ts)
-- [Retrieval augmented generation (RAG) with a chain and a vector store](/app/api/chat/retrieval/route.ts)
-- [Retrieval augmented generation (RAG) with an agent and a vector store](/app/api/chat/retrieval_agents/route.ts)
+## ✨ Features
 
-Most of them use Vercel's [AI SDK](https://github.com/vercel-labs/ai) to stream tokens to the client and display the incoming messages.
+### 🎯 Core AI Capabilities
+- **Advanced Chat Interface** with multiple LLM integrations
+- **RAG (Retrieval-Augmented Generation)** with document search
+- **Vector Embeddings** using OpenAI and pgvector
+- **Document Processing** with automatic chunking and indexing
+- **Semantic Search** across uploaded documents
 
-The agents use [LangGraph.js](https://langchain-ai.github.io/langgraphjs/), LangChain's framework for building agentic workflows. They use preconfigured helper functions to minimize boilerplate, but you can replace them with custom graphs as desired.
+### 🏢 SaaS Infrastructure
+- **Multi-tenant Architecture** with teams and organizations
+- **Role-based Access Control** (Admin/Member roles)
+- **Stripe Integration** with subscription management
+- **Usage Tracking & Billing** tied to AI queries
+- **Admin Dashboard** for document and user management
 
-https://github.com/user-attachments/assets/e389e4e4-4fb9-4223-a4c2-dc002c8f20d3
+### 💳 Subscription Plans
+- **Free Plan**: 100 AI queries, 10 documents, 100MB storage
+- **Pro Plan ($29/mo)**: 5,000 queries, 500 documents, 10GB storage
+- **Enterprise Plan ($99/mo)**: Unlimited usage, custom models, dedicated support
 
-It's free-tier friendly too! Check out the [bundle size stats below](#-bundle-size).
+### 🔐 Authentication & Security
+- **NextAuth.js** with Google OAuth and email/password
+- **JWT tokens** for API authentication
+- **Role-based permissions** for admin functions
+- **Team-based data isolation**
 
-You can check out a hosted version of this repo here: https://langchain-nextjs-template.vercel.app/
+## 🚀 Quick Start
 
-## 🚀 Getting Started
+### Prerequisites
+- Node.js 18+ 
+- PostgreSQL with pgvector extension
+- OpenAI API key
+- Stripe account (for payments)
 
-First, clone this repo and download it locally.
+### Installation
 
-Next, you'll need to set up environment variables in your repo's `.env.local` file. Copy the `.env.example` file to `.env.local`.
-To start with the basic examples, you'll just need to add your OpenAI API key.
+1. **Clone and install dependencies**
+```bash
+git clone <your-repo-url>
+cd ai-saas-mixed-starter
+yarn install
+```
 
-Because this app is made to run in serverless Edge functions, make sure you've set the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `false` to ensure tracing finishes if you are using [LangSmith tracing](https://docs.smith.langchain.com/).
+2. **Set up environment variables**
+```bash
+cp .env.example .env.local
+# Edit .env.local with your credentials
+```
 
-Next, install the required packages using your preferred package manager (e.g. `yarn`).
+3. **Set up the database**
+```bash
+# Create PostgreSQL database with pgvector
+createdb ai_saas_rag
+psql ai_saas_rag -c "CREATE EXTENSION vector;"
 
-Now you're ready to run the development server:
+# Run database migrations
+yarn db:generate
+yarn db:migrate
+```
 
+4. **Seed the database**
+```bash
+yarn db:seed
+```
+
+5. **Start the development server**
 ```bash
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result! Ask the bot something and you'll see a streamed response:
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-![A streaming conversation between the user and the AI](/public/images/chat-conversation.png)
+## 📊 Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The platform uses a comprehensive PostgreSQL schema with pgvector:
 
-Backend logic lives in `app/api/chat/route.ts`. From here, you can change the prompt and model, or add other modules and logic.
+- **Users & Teams**: Multi-tenant user management
+- **Subscriptions**: Stripe integration with plan limits
+- **Documents**: File storage with metadata
+- **Document Chunks**: Vector embeddings for RAG
+- **Chat Sessions**: Conversation history
+- **Usage Metrics**: Billing and analytics
+- **Activity Logs**: Audit trail
 
-## 🧱 Structured Output
+## 🎨 Architecture
 
-The second example shows how to have a model return output according to a specific schema using OpenAI Functions.
-Click the `Structured Output` link in the navbar to try it out:
+### Frontend
+- **Next.js 15** with App Router
+- **Tailwind CSS** + **shadcn/ui** components
+- **React** with TypeScript
+- **NextAuth.js** for authentication
 
-![A streaming conversation between the user and an AI agent](/public/images/structured-output-conversation.png)
+### Backend
+- **API Routes** for all business logic
+- **Drizzle ORM** with PostgreSQL
+- **pgvector** for semantic search
+- **LangChain.js** for AI workflows
 
-The chain in this example uses a [popular library called Zod](https://zod.dev) to construct a schema, then formats it in the way OpenAI expects.
-It then passes that schema as a function into OpenAI and passes a `function_call` parameter to force OpenAI to return arguments in the specified format.
+### AI Stack
+- **OpenAI GPT** models for chat
+- **OpenAI Embeddings** for vector search
+- **LangChain** for advanced AI workflows
+- **RAG Pipeline** with document chunking
 
-For more details, [check out this documentation page](https://js.langchain.com/docs/how_to/structured_output).
+### Payments
+- **Stripe Checkout** for subscriptions
+- **Stripe Webhooks** for automation
+- **Usage-based billing** tracking
 
-## 🦜 Agents
+## 📁 Project Structure
 
-To try out the agent example, you'll need to give the agent access to the internet by populating the `SERPAPI_API_KEY` in `.env.local`.
-Head over to [the SERP API website](https://serpapi.com/) and get an API key if you don't already have one.
-
-You can then click the `Agent` example and try asking it more complex questions:
-
-![A streaming conversation between the user and an AI agent](/public/images/agent-conversation.png)
-
-This example uses a [prebuilt LangGraph agent](https://langchain-ai.github.io/langgraphjs/tutorials/quickstart/), but you can customize your own as well.
-
-## 🐶 Retrieval
-
-The retrieval examples both use Supabase as a vector store. However, you can swap in
-[another supported vector store](https://js.langchain.com/docs/integrations/vectorstores) if preferred by changing
-the code under `app/api/retrieval/ingest/route.ts`, `app/api/chat/retrieval/route.ts`, and `app/api/chat/retrieval_agents/route.ts`.
-
-For Supabase, follow [these instructions](https://js.langchain.com/docs/integrations/vectorstores/supabase) to set up your
-database, then get your database URL and private key and paste them into `.env.local`.
-
-You can then switch to the `Retrieval` and `Retrieval Agent` examples. The default document text is pulled from the LangChain.js retrieval
-use case docs, but you can change them to whatever text you'd like.
-
-For a given text, you'll only need to press `Upload` once. Pressing it again will re-ingest the docs, resulting in duplicates.
-You can clear your Supabase vector store by navigating to the console and running `DELETE FROM documents;`.
-
-After splitting, embedding, and uploading some text, you're ready to ask questions!
-
-For more info on retrieval chains, [see this page](https://js.langchain.com/docs/tutorials/rag).
-The specific variant of the conversational retrieval chain used here is composed using LangChain Expression Language, which you can
-[read more about here](https://js.langchain.com/docs/how_to/qa_sources/). This chain example will also return cited sources
-via header in addition to the streaming response.
-
-For more info on retrieval agents, [see this page](https://langchain-ai.github.io/langgraphjs/tutorials/rag/langgraph_agentic_rag/).
-
-## 📦 Bundle size
-
-The bundle size for LangChain itself is quite small. After compression and chunk splitting, for the RAG use case LangChain uses 37.32 KB of code space (as of [@langchain/core 0.1.15](https://npmjs.com/package/@langchain/core)), which is less than 4% of the total Vercel free tier edge function alottment of 1 MB:
-
-![](/public/images/bundle-size.png)
-
-This package has [@next/bundle-analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) set up by default - you can explore the bundle size interactively by running:
-
-```bash
-$ ANALYZE=true yarn build
+```
+├── app/
+│   ├── (dashboard)/           # Protected dashboard routes
+│   │   ├── admin/            # Admin-only pages
+│   │   ├── pricing/          # Subscription plans
+│   │   └── chat/             # AI chat interface
+│   ├── (auth)/               # Authentication pages
+│   └── api/                  # API routes
+│       ├── admin/            # Admin endpoints
+│       ├── stripe/           # Payment webhooks
+│       └── chat/             # AI chat APIs
+├── lib/
+│   ├── auth/                 # Authentication logic
+│   ├── db/                   # Database schema & connection
+│   ├── payments/             # Stripe integration
+│   └── embeddings/           # RAG & vector search
+├── components/
+│   ├── ui/                   # Reusable UI components
+│   └── chat/                 # Chat-specific components
+└── drizzle/                  # Database migrations
 ```
 
-## 📚 Learn More
+## � API Endpoints
 
-The example chains in the `app/api/chat/route.ts` and `app/api/chat/retrieval/route.ts` files use
-[LangChain Expression Language](https://js.langchain.com/docs/concepts#langchain-expression-language) to
-compose different LangChain.js modules together. You can integrate other retrievers, agents, preconfigured chains, and more too, though keep in mind
-`HttpResponseOutputParser` is meant to be used directly with model output.
+### Authentication
+- `POST /api/auth/signin` - User sign in
+- `POST /api/auth/signup` - User registration
 
-To learn more about what you can do with LangChain.js, check out the docs here:
+### Admin Routes
+- `GET /api/admin/documents` - List all documents
+- `POST /api/admin/documents/upload` - Upload documents
+- `DELETE /api/admin/documents/[id]` - Delete document
 
-- https://js.langchain.com/docs/
+### Chat & RAG
+- `POST /api/chat/rag` - RAG-powered chat
+- `POST /api/chat/sessions` - Create chat session
+- `GET /api/chat/sessions/[id]` - Get chat history
 
-## ▲ Deploy on Vercel
+### Payments
+- `POST /api/stripe/checkout` - Create checkout session
+- `POST /api/stripe/webhook` - Handle Stripe events
+- `POST /api/stripe/portal` - Customer portal
 
-When ready, you can deploy your app on the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+## 🎯 Usage Examples
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Admin Document Upload
+1. Sign in as admin user
+2. Navigate to `/admin/documents`
+3. Upload PDF, DOCX, or text files
+4. Documents are automatically processed and indexed
 
-## Thank You!
+### RAG Chat Query
+```typescript
+// API call to RAG endpoint
+const response = await fetch('/api/chat/rag', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: "What are the main features of our product?",
+    teamId: "team-id"
+  })
+});
+```
 
-Thanks for reading! If you have any questions or comments, reach out to us on Twitter
-[@LangChainAI](https://twitter.com/langchainai), or [click here to join our Discord server](https://discord.gg/langchain).
+### Subscription Management
+1. Visit `/pricing` to view plans
+2. Click "Upgrade" to start Stripe Checkout
+3. Manage billing at `/dashboard/billing`
+
+## 🏗️ Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push
+
+### Docker
+```bash
+# Build and run with Docker
+docker build -t ai-saas-platform .
+docker run -p 3000:3000 ai-saas-platform
+```
+
+### Environment Variables for Production
+- Set `DATABASE_URL` to production PostgreSQL
+- Use production Stripe keys
+- Configure `NEXTAUTH_URL` to your domain
+- Set secure `NEXTAUTH_SECRET`
+
+## 📈 Monitoring & Analytics
+
+- **Usage Tracking**: Monitor AI queries per user/team
+- **Performance Metrics**: Track response times and success rates
+- **Billing Analytics**: Revenue and subscription insights
+- **Error Monitoring**: Comprehensive error tracking
+
+## � Security Features
+
+- **Data Encryption**: All sensitive data encrypted
+- **Rate Limiting**: API endpoints protected
+- **Input Validation**: Comprehensive input sanitization
+- **Audit Logging**: Complete activity trails
+- **GDPR Compliance**: User data management
+
+## 🧪 Testing
+
+```bash
+# Run tests
+yarn test
+
+# Run with coverage
+yarn test:coverage
+
+# E2E tests
+yarn test:e2e
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new features
+5. Submit a pull request
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: [docs.yourapp.com](https://docs.yourapp.com)
+- **Discord**: [discord.gg/yourapp](https://discord.gg/yourapp)
+- **Email**: support@yourapp.com
+
+## 🙏 Acknowledgments
+
+This project combines the best features from:
+- [LangChain Next.js Template](https://github.com/langchain-ai/langchain-nextjs-template)
+- [Next.js SaaS Starter](https://github.com/nextjs/saas-starter)
+- [iaconc RAG SaaS](https://github.com/armmmo/iaconc)
+
+Built with ❤️ using Next.js, LangChain, Stripe, and PostgreSQL.
