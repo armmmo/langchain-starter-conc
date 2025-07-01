@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { ChatOpenAI } from '@langchain/openai';
 import { HumanMessage } from '@langchain/core/messages';
-import { authOptions } from '@/lib/auth';
-import { db } from '@/lib/db';
-import { usage, chatSessions, chatMessages } from '@/lib/db/schema';
-import { generateRAGResponse } from '@/lib/embeddings';
+import { authOptions } from '../../../../lib/auth';
+import { db } from '../../../../lib/db';
+import { usage, chatSessions, chatMessages } from '../../../../lib/db/schema';
+import { generateRAGResponse } from '../../../../lib/embeddings';
 import { nanoid } from 'nanoid';
 
 export async function POST(request: NextRequest) {

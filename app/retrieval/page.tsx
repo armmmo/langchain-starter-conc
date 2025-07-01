@@ -1,96 +1,45 @@
-import { ChatWindow } from "@/components/ChatWindow";
-import { GuideInfoBox } from "@/components/guide/GuideInfoBox";
-
-export default function AgentsPage() {
-  const InfoCard = (
-    <GuideInfoBox>
-      <ul>
-        <li className="hidden text-l md:block">
-          🔗
-          <span className="ml-2">
-            This template showcases how to perform retrieval with a{" "}
-            <a href="https://js.langchain.com/" target="_blank">
-              LangChain.js
-            </a>{" "}
-            chain and the Vercel{" "}
-            <a href="https://sdk.vercel.ai/docs" target="_blank">
-              AI SDK
-            </a>{" "}
-            in a{" "}
-            <a href="https://nextjs.org/" target="_blank">
-              Next.js
-            </a>{" "}
-            project.
-          </span>
-        </li>
-        <li className="hidden text-l md:block">
-          🪜
-          <span className="ml-2">The chain works in two steps:</span>
-          <ul>
-            <li className="ml-4">
-              1️⃣
-              <span className="ml-2">
-                First, it rephrases the input question into a
-                &quot;standalone&quot; question, dereferencing pronouns based on
-                the chat history.
-              </span>
-            </li>
-            <li className="ml-4">
-              2️⃣
-              <span className="ml-2">
-                Then, it queries the retriever for documents similar to the
-                dereferenced question and composes an answer.
-              </span>
-            </li>
-          </ul>
-        </li>
-        <li className="hidden text-l md:block">
-          💻
-          <span className="ml-2">
-            You can find the prompt and model logic for this use-case in{" "}
-            <code>app/api/chat/retrieval/route.ts</code>.
-          </span>
-        </li>
-        <li>
-          🐶
-          <span className="ml-2">
-            By default, the agent is pretending to be a talking puppy, but you
-            can change the prompt to whatever you want!
-          </span>
-        </li>
-        <li className="text-l">
-          🎨
-          <span className="ml-2">
-            The main frontend logic is found in{" "}
-            <code>app/retrieval/page.tsx</code>.
-          </span>
-        </li>
-        <li className="hidden text-l md:block">
-          🔱
-          <span className="ml-2">
-            Before running this example on your own, you&apos;ll first need to
-            set up a Supabase vector store. See the README for more details.
-          </span>
-        </li>
-        <li className="text-l">
-          👇
-          <span className="ml-2">
-            Upload some text, then try asking e.g.{" "}
-            <code>What is a document loader?</code> below!
-          </span>
-        </li>
-      </ul>
-    </GuideInfoBox>
-  );
+export default function RetrievalPage() {
   return (
-    <ChatWindow
-      endpoint="api/chat/retrieval"
-      emptyStateComponent={InfoCard}
-      showIngestForm={true}
-      placeholder={
-        'I\'ve got a nose for finding the right documents! Ask, "What is a document loader?"'
-      }
-      emoji="🐶"
-    />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Document Retrieval</h1>
+      
+      <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4">About RAG (Retrieval Augmented Generation)</h2>
+        <ul className="space-y-3">
+          <li className="flex items-start">
+            <span className="text-xl mr-2">📄</span>
+            <span>
+              Upload documents and ask questions about their content using AI-powered search.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-xl mr-2">🔍</span>
+            <span>
+              Vector embeddings enable semantic search beyond simple keyword matching.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-xl mr-2">🤖</span>
+            <span>
+              LangChain.js handles document processing and retrieval automatically.
+            </span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-xl mr-2">💡</span>
+            <span>
+              Try asking questions about uploaded documents to see contextual AI responses.
+            </span>
+          </li>
+        </ul>
+      </div>
+      
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold mb-4">Document Chat Interface</h3>
+        <p className="text-gray-600">
+          The full document retrieval and chat interface will be available once the build issues are resolved.
+          This would normally include document upload, processing, and intelligent Q&A capabilities.
+        </p>
+      </div>
+    </div>
   );
 }

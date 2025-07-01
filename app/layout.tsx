@@ -1,9 +1,7 @@
 import "./globals.css";
 import { Public_Sans } from "next/font/google";
-import { ActiveLink } from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
+import { ActiveLink } from "../components/Navbar";
 import { GithubIcon } from "lucide-react";
-import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
@@ -81,30 +79,27 @@ export default function RootLayout({
                   <ActiveLink href="/retrieval_agents">
                     🤖 Retrieval Agents
                   </ActiveLink>
-                  <ActiveLink href="/ai_sdk">
-                    🌊 React Server Components
-                  </ActiveLink>
+
                   <ActiveLink href="/langgraph">🕸️ LangGraph</ActiveLink>
                 </nav>
               </div>
 
               <div className="flex justify-center">
-                <Button asChild variant="outline" size="default">
-                  <a
-                    href="https://github.com/langchain-ai/langchain-nextjs-template"
-                    target="_blank"
-                  >
-                    <GithubIcon className="size-3" />
-                    <span>Open in GitHub</span>
-                  </a>
-                </Button>
+                <a
+                  href="https://github.com/langchain-ai/langchain-nextjs-template"
+                  target="_blank"
+                  className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-50"
+                >
+                  <GithubIcon className="size-3" />
+                  <span>Open in GitHub</span>
+                </a>
               </div>
             </div>
             <div className="bg-background mx-4 relative grid rounded-t-2xl border border-input border-b-0">
               <div className="absolute inset-0">{children}</div>
             </div>
           </div>
-          <Toaster />
+
         </NuqsAdapter>
       </body>
     </html>

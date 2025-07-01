@@ -2,7 +2,7 @@ import { NextAuthOptions } from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
+const bcrypt = require('bcryptjs');
 import { db } from '../db';
 import { users } from '../db/schema';
 import { eq } from 'drizzle-orm';
